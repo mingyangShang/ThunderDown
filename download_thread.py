@@ -29,15 +29,23 @@ class DownloadThread(threading.Thread):
 
         self.request = DownloadRequest(url,startPos,endPos)
 
+    def set_output(self,conn_output):
+        self.output = conn_output
+
     def run(self):
         #start a urlrequest
         print self.name,"start"
+        if not self.output:
+            raise Exception("output must be set before thread run")
+        self.request.set_output(self.output)
         if self.request:
             self.request.start()
         else:
             print 'request is None'
         print self.name,'finish'
-        #write to file
+
+    def get_completed_len(self):
+        return self.request.total_len
 
     def getTaskQueue(self):
         return self.__task_queue__
